@@ -26,13 +26,13 @@ function App() {
 
   const { innerWidth, innerHeight } = window
 
-  const [mousePosition, setMousePosition] = useState({
+  const [mouse, setMouse] = useState({
     x: 0,
     y: 0,
   })
 
   const handleMouseMove = (ev) => {
-    setMousePosition({ x: ev.pageX, y: ev.pageY })
+    setMouse({ x: ev.pageX, y: ev.pageY })
   }
 
   var particleArray = []
@@ -52,7 +52,7 @@ function App() {
     // const particleArray = []
 
     // MOUSE
-    // mousePosition.x mousePosition.y useState
+    // Mouse.x Mouse.y useState
     const mouseRadius = 150
 
     // TEXT
@@ -67,7 +67,6 @@ function App() {
     // box to check
     ctx.strokeStyle = "white"
     ctx.strokeRect(0, 0, 45, 60)
-
     class Particle {
       constructor(x, y) {
         this.x = x
@@ -77,12 +76,23 @@ function App() {
         this.baseY = this.y
         this.density = Math.random() * 30 + 1
       }
+
       draw() {
-        ctx.fillStyle = "white"
+        ctx.fillStyle = "hotpink"
         ctx.beginPath()
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2)
         ctx.closePath()
         ctx.fill()
+      }
+      update() {
+        let dx = mouse.x - this.x
+        let dy = mouse.y - this.y
+        let dist = Math.sqrt(dx * dx + dy * dy)
+        if (dist < 50) {
+          this.size = 50
+        } else {
+          this.size = 3
+        }
       }
     }
 
@@ -94,27 +104,26 @@ function App() {
         particleArray.push(new Particle(x, y))
       }
     }
-
     init()
-    // console.log(particleArray)
 
     const animate = () => {
       ctx.clearRect(0, 0, canvasWidth, canvasHeight)
       particleArray.forEach((particle) => {
         particle.draw()
+        particle.update()
       })
       requestAnimationFrame(animate)
     }
     animate()
   }
 
-  const showMouseData = false
+  const showMouseData = true
 
   return (
     <div id="appContainer" onMouseMove={handleMouseMove}>
       {showMouseData && (
         <div id="display">
-          Mouse: {mousePosition.x}, {mousePosition.y}
+          Mouse: {mouse.x}, {mouse.y}
         </div>
       )}
       <canvas id="myCanvas">
